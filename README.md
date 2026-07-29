@@ -1,77 +1,78 @@
-# ESP32Utils
+# 🚻 Toilet Notification System
 
-ESP32開発を簡単にするためのユーティリティライブラリです。  
-A utility library to simplify ESP32 development.
+ESP32を使用したトイレ使用状況通知システムです。
 
-## 機能 / Features
-
-- Wi-Fi接続 / Wi-Fi Connection
+照度センサーでトイレ内の照明を監視し、使用中・空きの状態をWi-Fi経由で別のESP32へ送信します。受信側ESP32はLEDを点灯・消灯し、トイレの使用状況を離れた場所から確認できます。
 
 ---
 
-## インストール / Installation
+## 使用技術
 
-このライブラリをArduinoのlibrariesフォルダへ配置してください。
-
-```
-Documents/Arduino/libraries/ESP32Utils
-```
+* ESP32
+* Arduino Framework
+* Wi-Fi
+* HTTP通信
+* OTA (Over The Air)
+* 照度センサー
+* LED
 
 ---
 
-## 使い方 / Usage
+## システム構成
 
-### 1. `wifi_config.example.h` を `wifi_config.h` という名前でコピーします。
-
-```cpp
-#pragma once
-
-const char* WIFI_SSID = "YOUR_WIFI_SSID";
-const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-```
-
-### 2. Wi-Fi情報を入力します。
-
-```cpp
-const char* WIFI_SSID = "自宅のSSID";
-const char* WIFI_PASSWORD = "パスワード";
-```
-
-### 3. ライブラリを読み込みます。
-
-```cpp
-#include "wifi_config.h"
-#include <wifi_manager.h>
-
-void setup() {
-    Serial.begin(115200);
-
-    wifiConnect(WIFI_SSID, WIFI_PASSWORD);
-}
-
-void loop() {
-
-}
+```text
+照度センサー
+      │
+      ▼
+ESP32（送信側）
+  ・照度を1秒ごとに取得
+  ・3回連続で判定
+  ・HTTPで状態送信
+      │ Wi-Fi
+      ▼
+ESP32（受信側）
+  ・HTTPリクエスト受信
+  ・LED ON/OFF
 ```
 
 ---
 
-## サンプル / Examples
+## 動作
 
-- Basic
+### 使用中
 
----
+照度がしきい値未満の場合、トイレを使用中と判定します。
 
-## 今後追加予定 / Roadmap
+```
+GET /led?state=1
+```
 
-- [x] Wi-Fi Manager
-- [x] OTA Manager
-- [ ] LINE Manager
-- [ ] Discord Manager
-- [ ] MQTT Manager
+受信側のLEDを点灯します。
 
 ---
 
-## ライセンス / License
+### 空き
 
-MIT License
+照度が3回連続でしきい値以上になった場合、空きと判定します。
+
+```
+GET /led?state=0
+```
+
+受信側のLEDを消灯します。
+
+---
+
+## 工夫した点
+
+* 3回連続で判定することで、一時的な照度変化による誤検知を低減
+* Wi-Fi経由でESP32同士をHTTP通信
+* OTAに対応し、USB接続なしでプログラム更新可能
+* Wi-Fi接続処理・OTA処理をライブラリ化し、再利用しやすい構成にした
+
+---
+
+## 今後の改善案
+
+* Web画面で使用状況を確認
+* MQTT対応
