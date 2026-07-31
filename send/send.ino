@@ -8,13 +8,13 @@ void setup() {
   Serial.begin(115200);
 
   wifiConnect(WIFI_SSID, WIFI_PASSWORD);
-  otaSetup("toilet");
+  otaSetup("toilet_send");
 }
 
 int arr[3] = { 0, 0, 0 };
 int count = 0;
 unsigned long lastTime = 0;
-const char* LED_SERVER = "http://192.168.1.116";
+const char* LED_SERVER = "http://192.168.1.57";
 bool lastOccupied = false;
 
 void loop() {
