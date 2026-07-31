@@ -14,7 +14,7 @@ void setup() {
 int arr[3] = { 0, 0, 0 };
 int count = 0;
 unsigned long lastTime = 0;
-const char* LED_SERVER = "http://192.168.1.57";
+const char* LED_SERVER = "http://toilet_receive.local";
 bool lastOccupied = false;
 
 void loop() {

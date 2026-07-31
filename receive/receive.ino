@@ -17,9 +17,10 @@ void handleLed() {
 
   bool state = server.arg("state").toInt();
 
-  digitalWrite(LED_PIN, state ? HIGH : LOW);
+  Serial.print("state = ");
+  Serial.println(state);
 
-  Serial.printf("LED: %s\n", state ? "ON" : "OFF");
+  digitalWrite(LED_PIN, state ? HIGH : LOW);
 
   server.send(200, "text/plain", "OK");
 }
