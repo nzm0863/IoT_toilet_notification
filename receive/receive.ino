@@ -16,8 +16,8 @@ unsigned long occupiedStart = 0;
 unsigned long lastBlink = 0;
 bool blinkState = false;
 
-// const unsigned long BLINK_AFTER = 30UL * 60UL * 1000UL;  //30分
-const unsigned long BLINK_AFTER = 10000;  //10秒
+const unsigned long BLINK_AFTER = 30UL * 60UL * 1000UL;  //30分
+// const unsigned long BLINK_AFTER = 10000;  //10秒
 
 void handleLed() {
   Serial.println("Received!");
