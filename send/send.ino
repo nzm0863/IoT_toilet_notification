@@ -17,6 +17,9 @@ unsigned long lastTime = 0;
 const char* LED_SERVER = "http://toilet_receive.local";
 bool lastOccupied = false;
 
+unsigned long lastSend = 0;
+const unsigned long SEND_INTERVAL = 30000;  //30秒
+
 void loop() {
   otaHandle();
   if (millis() - lastTime >= 1000) {
@@ -24,7 +27,7 @@ void loop() {
     int lightValue = analogRead(SENSOR_PIN);
     Serial.println(lightValue);
 
-    int threshold = 3500;
+    int threshold = 3000;
 
 
     // 最新の値を保存
@@ -43,7 +46,10 @@ void loop() {
 
     bool occupied = !allHigh;
 
-    if (occupied != lastOccupied) {
+    if (occupied != lastOccupied || millis() - lastSend >= SEND_INTERVAL) {
+
+      lastOccupied = occupied;
+      lastSend = millis();
       lastOccupied = occupied;
 
       String url = String(LED_SERVER) + "/led?state=" + String(occupied);
