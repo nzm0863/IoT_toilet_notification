@@ -4,6 +4,11 @@ ESP32を使用したトイレ使用状況通知システムです。
 
 照度センサーでトイレ内の照明を監視し、使用中・空きの状態をWi-Fi経由で別のESP32へ送信します。受信側ESP32はLEDを点灯・消灯し、トイレの使用状況を離れた場所から確認できます。
 
+![LED](image.png)
+
+## youtube_実際の動作確認動画
+https://www.youtube.com/shorts/MFViIbvx_ls
+
 ---
 
 ## 使用技術
