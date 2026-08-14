@@ -2,6 +2,7 @@
 #include <wifi_manager.h>
 #include <ota_manager.h>
 #include <HTTPClient.h>
+#include <WiFi.h>
 #define SENSOR_PIN 34
 
 void setup() {
@@ -19,15 +20,25 @@ bool lastOccupied = false;
 
 unsigned long lastSend = 0;
 const unsigned long SEND_INTERVAL = 30000;  //30秒
+unsigned long lastWifiCheck = 0;
 
 void loop() {
   otaHandle();
+  if (millis() - lastWifiCheck >= 10000) {
+    lastWifiCheck = millis();
+
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("WiFi disconnected. Reconnecting...");
+      WiFi.disconnect();
+      WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    }
+  }
   if (millis() - lastTime >= 1000) {
     lastTime = millis();
     int lightValue = analogRead(SENSOR_PIN);
     Serial.println(lightValue);
 
-    int threshold = 3000;
+    int threshold = 2800;
 
 
     // 最新の値を保存
@@ -50,7 +61,6 @@ void loop() {
 
       lastOccupied = occupied;
       lastSend = millis();
-      lastOccupied = occupied;
 
       String url = String(LED_SERVER) + "/led?state=" + String(occupied);
 

@@ -2,6 +2,7 @@
 #include <wifi_manager.h>
 #include <WebServer.h>
 #include <ota_manager.h>
+#include <WiFi.h>
 
 
 #define LED_PIN 18
@@ -18,6 +19,7 @@ bool blinkState = false;
 
 const unsigned long BLINK_AFTER = 30UL * 60UL * 1000UL;  //30分
 // const unsigned long BLINK_AFTER = 10000;  //10秒
+unsigned long lastWifiCheck = 0;
 
 void handleLed() {
   Serial.println("Received!");
@@ -67,10 +69,21 @@ void setup() {
   server.begin();
 }
 
+
 void loop() {
   otaHandle();
   server.handleClient();
 
+  if (millis() - lastWifiCheck >= 10000) {
+    lastWifiCheck = millis();
+
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("WiFi disconnected. Reconnecting...");
+      WiFi.disconnect();
+      WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    }
+  }
+  
   if (ledState) {
 
     if (!blinking && millis() - occupiedStart >= BLINK_AFTER) {
